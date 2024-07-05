@@ -1,0 +1,14 @@
+[flake8]
+# We ignore the following flake8 rules
+# E501: Line too long (N > 79 characters)
+# W503: Line break before binary operator
+# W504: Line break occurred after a binary operator
+# E741: Do not use variables named 'I', 'O', or 'l'
+ignore =
+	E501,
+    W503,
+    W504,
+    E741,
+
+exclude =
+	**/.git,

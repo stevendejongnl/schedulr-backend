@@ -1,0 +1,14 @@
+services:
+  app:
+    image: stevendejong/schedulr-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./entrypoint.sh:/srv/entrypoint.sh
+      - ./schedulr:/srv/schedulr
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8001:8001"
