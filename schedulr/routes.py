@@ -22,3 +22,6 @@ class Routes:
             if isinstance(func, staticmethod):
                 func = func.__func__
             self.app.router.add_route(method, path, func)
+
+    def __iter__(self):
+        return iter(self._routes)
