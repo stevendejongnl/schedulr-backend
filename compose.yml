@@ -7,6 +7,7 @@ services:
     env_file:
       - .env
     volumes:
+      - ./requirements.txt:/srv/requirements.txt
       - ./entrypoint.sh:/srv/entrypoint.sh
       - ./schedulr:/srv/schedulr
     ports:
