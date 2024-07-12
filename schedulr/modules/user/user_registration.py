@@ -1,4 +1,5 @@
 import logging
+from abc import ABC, abstractmethod
 
 from email_validator import validate_email, EmailNotValidError
 
@@ -26,8 +27,16 @@ class UserEmailNotValid:
     pass
 
 
+class UserRegistration(ABC):
+    @abstractmethod
+    def register(
+        self, user_email: str, user_password: str
+    ) -> UserRegistered | UserNotRegistered:
+        pass
+
+
 @register_dependency(DependencyType.FAKE)
-class FakeUserRegistration:
+class FakeUserRegistration(UserRegistration):
     _user_email: str
     _user_password: str
 
@@ -64,5 +73,5 @@ class FakeUserRegistration:
 
 
 @register_dependency(DependencyType.REAL)
-class RealUserRegistration:
+class RealUserRegistration(UserRegistration, ABC):
     pass

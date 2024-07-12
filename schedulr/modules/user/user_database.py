@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from schedulr.helpers.dependency_injection import register_dependency, DependencyType
@@ -12,8 +13,22 @@ class UserNotFound:
     pass
 
 
+class UserDatabase(ABC):
+    @abstractmethod
+    def add_user(self, user: User) -> None:
+        pass
+
+    @abstractmethod
+    def get_users(self) -> list[User]:
+        pass
+
+    @abstractmethod
+    def get_user(self, email: str) -> User | UserNotFound:
+        pass
+
+
 @register_dependency(DependencyType.FAKE)
-class FakeUserDatabase:
+class FakeUserDatabase(UserDatabase):
     _users: list[User]
 
     def __init__(self) -> None:
@@ -32,9 +47,5 @@ class FakeUserDatabase:
 
 
 @register_dependency(DependencyType.REAL)
-class RealUserDatabase:
-    def add_user(self, user: User) -> None:
-        pass
-
-    def get_user(self, email: str) -> None:
-        pass
+class RealUserDatabase(UserDatabase, ABC):
+    pass
