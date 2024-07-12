@@ -18,3 +18,8 @@ repos:
       - id: pretty-format-json
       - id: requirements-txt-fixer
       - id: trailing-whitespace
+
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black

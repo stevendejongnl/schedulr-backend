@@ -14,10 +14,12 @@ class UserNotFound:
 
 @register_dependency(DependencyType.FAKE)
 class FakeUserDatabase:
-    def __init__(self):
-        self._users: list[User] = []
+    _users: list[User]
 
-    def add_user(self, user: User):
+    def __init__(self) -> None:
+        self._users = []
+
+    def add_user(self, user: User) -> None:
         self._users.append(user)
 
     def get_users(self) -> list[User]:
@@ -25,15 +27,14 @@ class FakeUserDatabase:
 
     def get_user(self, email: str) -> User | UserNotFound:
         return next(
-            (
-                user for user in self._users
-                if user.email == email
-            ),
-            UserNotFound()
+            (user for user in self._users if user.email == email), UserNotFound()
         )
 
 
 @register_dependency(DependencyType.REAL)
 class RealUserDatabase:
-    # raise NotImplementedError
-    pass
+    def add_user(self, user: User) -> None:
+        pass
+
+    def get_user(self, email: str) -> None:
+        pass

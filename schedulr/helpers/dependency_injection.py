@@ -4,8 +4,8 @@ from typing import Callable, Any
 
 
 class DependencyType(Enum):
-    REAL = 'real'
-    FAKE = 'fake'
+    REAL = "real"
+    FAKE = "fake"
 
 
 class DependencyNotFound(Exception):
@@ -25,7 +25,9 @@ class DependencyInjection:
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Any:
         if not cls._instance:
-            cls._instance = super(DependencyInjection, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(DependencyInjection, cls).__new__(
+                cls, *args, **kwargs
+            )
             cls._instance.dependencies = {}
         return cls._instance
 
@@ -33,10 +35,7 @@ class DependencyInjection:
         self._dependency_type = dependency_type
 
     def add_dependency(
-            self,
-            class_name: str,
-            instance: Callable,
-            dependency_type: DependencyType
+        self, class_name: str, instance: Callable, dependency_type: DependencyType
     ) -> None:
         self.dependencies[class_name] = Dependency(
             instance=instance,

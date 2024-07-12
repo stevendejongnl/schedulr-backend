@@ -15,6 +15,7 @@ class Routes:
             log_info(f"Registering route {method} {path}")
             cls._routes.append((path, method, func))
             return func
+
         return decorator
 
     def activate(self):

@@ -34,7 +34,9 @@ class FakeUserRegistration:
     def __init__(self, database: RealUserDatabase | FakeUserDatabase):
         self._database = database
 
-    def _validate_user_email(self, user_email: str) -> UserEmailValid | UserEmailNotValid:
+    def _validate_user_email(
+        self, user_email: str
+    ) -> UserEmailValid | UserEmailNotValid:
         try:
             valid = validate_email(user_email, check_deliverability=False)
             self._user_email = valid.normalized
@@ -43,7 +45,9 @@ class FakeUserRegistration:
             logging.error(error)
             return UserEmailNotValid()
 
-    def register(self, user_email: str, user_password: str) -> UserRegistered | UserNotRegistered:
+    def register(
+        self, user_email: str, user_password: str
+    ) -> UserRegistered | UserNotRegistered:
         user_email_valid = self._validate_user_email(user_email=user_email)
         if isinstance(user_email_valid, UserEmailNotValid):
             logging.error(f"User email is not valid: {user_email}")
@@ -54,9 +58,7 @@ class FakeUserRegistration:
             logging.error(f"User already registered: {existing_user.email}")
             return UserNotRegistered()
 
-        user = User(
-            email=self._user_email
-        )
+        user = User(email=self._user_email)
         self._database.add_user(user)
         return UserRegistered()
 

@@ -8,10 +8,10 @@ from schedulr.logger import log_info
 from schedulr.routes import Routes
 
 
-def load_route_modules(base_path: str = 'schedulr/routes') -> None:
-    for file_path in glob.glob(os.path.join(base_path, '*.py')):
+def load_route_modules(base_path: str = "schedulr/routes") -> None:
+    for file_path in glob.glob(os.path.join(base_path, "*.py")):
         module_name = os.path.basename(file_path)[:-3]
-        if module_name not in ['app']:
+        if module_name not in ["app"]:
             spec = spec_from_file_location(module_name, file_path)
             if spec is None:
                 continue
