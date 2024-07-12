@@ -1,4 +1,5 @@
 from aiohttp import web
+from aiohttp_swagger import setup_swagger
 
 from schedulr.logger import log_info
 
@@ -23,6 +24,10 @@ class Routes:
             if isinstance(func, staticmethod):
                 func = func.__func__
             self.app.router.add_route(method, path, func)
+        self.setup_swagger()
+
+    def setup_swagger(self):
+        setup_swagger(self.app, swagger_url="/api/v1/docs")
 
     def __iter__(self):
         return iter(self._routes)
