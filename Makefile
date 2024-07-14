@@ -4,7 +4,7 @@ version:
 	echo "VERSION = \"$$(git describe --tags --match 'v[0-9]*' --abbrev=0 || echo 'v0.0.0')\"" > schedulr/version.py
 
 version-ci:
-	echo "VERSION = \"$$(NEW_VERSION)\"" > schedulr/version.py
+	echo "VERSION = \"$(NEW_VERSION)\"" > schedulr/version.py
 
 image: version
 	docker build -t stevendejong/schedulr-backend .
