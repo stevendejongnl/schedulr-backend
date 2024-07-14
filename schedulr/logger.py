@@ -8,3 +8,7 @@ logging.basicConfig(
 
 def log_info(message: str, *args: Any, **kwargs: Any) -> None:
     logging.info(message, *args, **kwargs)
+
+
+def log_error(message: str, *args: Any, **kwargs: Any) -> None:
+    logging.error(message, *args, **kwargs)

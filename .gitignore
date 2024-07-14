@@ -4,3 +4,4 @@ __pycache__/
 .mypy_cache/
 .idea
 scripts/pre-commit.pyz
+schedulr/version.py

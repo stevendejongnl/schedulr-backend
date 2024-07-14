@@ -7,6 +7,7 @@ from schedulr.helpers.dependency_injection import register_dependency, Dependenc
 @dataclass(frozen=True)
 class User:
     email: str
+    username: str | None = None
 
 
 class UserNotFound:

@@ -53,4 +53,21 @@ class TestUserRegistration:
         users = self.user_database.get_users()
 
         assert len(users) == 2
-        assert users == [User("user1@email.mail"), User("user2@email.mail")]
+        assert users == [
+            User("user1@email.mail", "user1"),
+            User("user2@email.mail", "user2"),
+        ]
+
+    def test_that_it_is_possible_to_register_with_an_username(self) -> None:
+        self.user_registration.register("user@email.mail", "password", "username")
+
+        user = self.user_database.get_user("user@email.mail")
+        assert user.username == "username"
+
+    def test_that_not_filling_username_registers_with_first_part_of_email_as_username(
+        self,
+    ) -> None:
+        self.user_registration.register("userwithoutusername@email.mail", "password")
+
+        user = self.user_database.get_user("userwithoutusername@email.mail")
+        assert user.username == "userwithoutusername"

@@ -27,7 +27,7 @@ class UserEmailNotValid:
     pass
 
 
-class UserRegistration(ABC):
+class UserRegistrationBase(ABC):
     @abstractmethod
     def register(
         self, user_email: str, user_password: str
@@ -36,7 +36,7 @@ class UserRegistration(ABC):
 
 
 @register_dependency(DependencyType.FAKE)
-class FakeUserRegistration(UserRegistration):
+class FakeUserRegistration(UserRegistrationBase):
     _user_email: str
     _user_password: str
 
@@ -55,11 +55,11 @@ class FakeUserRegistration(UserRegistration):
             return UserEmailNotValid()
 
     def register(
-        self, user_email: str, user_password: str
+        self, email: str, password: str, username: str | None = None
     ) -> UserRegistered | UserNotRegistered:
-        user_email_valid = self._validate_user_email(user_email=user_email)
+        user_email_valid = self._validate_user_email(user_email=email)
         if isinstance(user_email_valid, UserEmailNotValid):
-            logging.error(f"User email is not valid: {user_email}")
+            logging.error(f"User email is not valid: {email}")
             return UserNotRegistered()
 
         existing_user = self._database.get_user(email=self._user_email)
@@ -67,11 +67,14 @@ class FakeUserRegistration(UserRegistration):
             logging.error(f"User already registered: {existing_user.email}")
             return UserNotRegistered()
 
-        user = User(email=self._user_email)
+        if username is None:
+            username = self._user_email.split("@")[0]
+
+        user = User(email=self._user_email, username=username)
         self._database.add_user(user)
         return UserRegistered()
 
 
 @register_dependency(DependencyType.REAL)
-class RealUserRegistration(UserRegistration, ABC):
+class RealUserRegistration(UserRegistrationBase, ABC):
     pass
