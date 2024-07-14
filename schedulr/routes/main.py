@@ -10,8 +10,8 @@ class MainRoutes:
         "/",
         "GET",
         SwaggerDoc(
-            description="Main endpoint",
             tags=["Main"],
+            description="Main endpoint",
             responses={"200": {"description": "successful operation"}},
         ),
     )

@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 from email_validator import validate_email, EmailNotValidError
 
@@ -7,8 +8,9 @@ from schedulr.helpers.dependency_injection import register_dependency, Dependenc
 from schedulr.modules.user.user_database import FakeUserDatabase, RealUserDatabase, User
 
 
+@dataclass(frozen=True)
 class UserRegistered:
-    pass
+    email: str
 
 
 class UserCannotBeRegistered:
@@ -59,12 +61,12 @@ class FakeUserRegistration(UserRegistrationBase):
     ) -> UserRegistered | UserNotRegistered:
         user_email_valid = self._validate_user_email(user_email=email)
         if isinstance(user_email_valid, UserEmailNotValid):
-            logging.error(f"User email is not valid: {email}")
+            logging.error(f"[FakeUserRegistration] Invalid email: {email}")
             return UserNotRegistered()
 
         existing_user = self._database.get_user(email=self._user_email)
         if isinstance(existing_user, User):
-            logging.error(f"User already registered: {existing_user.email}")
+            logging.error(f"[FakeUserRegistration] User already registered: {email}")
             return UserNotRegistered()
 
         if username is None:
@@ -72,7 +74,7 @@ class FakeUserRegistration(UserRegistrationBase):
 
         user = User(email=self._user_email, username=username)
         self._database.add_user(user)
-        return UserRegistered()
+        return UserRegistered(email=self._user_email)
 
 
 @register_dependency(DependencyType.REAL)

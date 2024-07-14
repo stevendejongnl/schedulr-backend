@@ -1,12 +1,26 @@
+from dataclasses import dataclass
+
 from aiohttp import web
 from aiohttp.web_request import Request
+from aiohttp.web_response import Response
 
-from schedulr.logger import log_info
 from schedulr.modules.user.user_database import FakeUserDatabase
 from schedulr.modules.user.user_registration import UserRegistered, FakeUserRegistration
-from schedulr.routes import Routes, SwaggerDoc
+from schedulr.routes import Routes, SwaggerDoc, json_response, responses
 
 USER_BASE_PATH = "/user"
+
+
+@dataclass(frozen=True)
+class UserRegisterResponse:
+    status: int = 201
+    message: str = "User registered successfully"
+
+
+@dataclass(frozen=True)
+class UserRegisterFailedResponse:
+    status: int = 400
+    message: str = "User not registered"
 
 
 class UserRoutes:
@@ -18,27 +32,31 @@ class UserRoutes:
         f"{USER_BASE_PATH}/register",
         "POST",
         SwaggerDoc(
-            description="User Register endpoint",
             tags=["User"],
-            parameters=[
+            description="User Register endpoint",
+            requestBody={
+                "description": "The user to create.",
+                "required": True,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["email", "password"],
+                            "properties": {
+                                "username": {"type": "string"},
+                                "email": {"type": "string"},
+                                "password": {"type": "string"},
+                            },
+                        }
+                    }
+                },
+            },
+            responses=responses(
                 {
-                    "in": "body",
-                    "name": "user",
-                    "description": "The user to create.",
-                    "schema": {
-                        "type": "object",
-                        "required": ["userName"],
-                        "properties": {
-                            # "username": {
-                            #     "type": "string"
-                            # },
-                            "email": {"type": "string"},
-                            "password": {"type": "string"},
-                        },
-                    },
+                    UserRegisterResponse(),
+                    UserRegisterFailedResponse(),
                 }
-            ],
-            responses={"200": {"description": "successful operation"}},
+            ),
         ),
     )
     async def register(
@@ -46,16 +64,15 @@ class UserRoutes:
         user_registration: FakeUserRegistration = FakeUserRegistration(
             database=FakeUserDatabase()
         ),
-    ) -> web.Response:
+    ) -> Response:
         json_request = await request.json()
         username = json_request.get("username")
         email = json_request.get("email")
         password = json_request.get("password")
 
         user_registered = user_registration.register(email, password, username)
-        log_info(f"User registered: {user_registered}")
 
         if isinstance(user_registered, UserRegistered):
-            return web.json_response({"message": "User registered successfully"})
+            return json_response(UserRegisterResponse())
 
-        return web.json_response({"message": "User not registered"})
+        return json_response(UserRegisterFailedResponse())
