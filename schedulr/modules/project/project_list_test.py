@@ -9,7 +9,7 @@ def test_add_project() -> None:
         project_type=ProjectType.SUPER_SPECIAL,
         description="Do something with your life",
         start_date=datetime(2024, 7, 1),
-        end_date=datetime(2024, 12, 31)
+        end_date=datetime(2024, 12, 31),
     )
     project_list.add_project(project)
 
