@@ -1,6 +1,4 @@
 from dataclasses import dataclass, asdict, field
-from inspect import isclass
-from types import FunctionType
 
 from aiohttp import web
 from aiohttp_swagger import setup_swagger
@@ -9,11 +7,29 @@ from schedulr.logger import log_info
 from schedulr.version import VERSION
 
 
+def json_response(response_class):
+    return web.json_response(
+        {
+            "status": response_class.status,
+            "message": response_class.message,
+        },
+        status=response_class.status,
+    )
+
+
+def responses(response_classes: set):
+    return {
+        str(response_class.status): {"description": response_class.message}
+        for response_class in response_classes
+    }
+
+
 @dataclass(frozen=True)
 class SwaggerDoc:
-    description: str
     tags: list[str]
+    description: str
     responses: dict
+    requestBody: dict = field(default_factory=lambda: {})
     consumes: list[str] = field(default_factory=lambda: ["multipart/form-data"])
     produces: list[str] = field(default_factory=lambda: ["application/json"])
     parameters: list[dict] = field(default_factory=list)
@@ -40,9 +56,6 @@ class Routes:
     def activate(self):
         paths = {}
         for path, method, func, swagger_doc in self._routes:
-            log_info(
-                f"{func.__name__}, {isclass(func)}, {isinstance(func, FunctionType)}, {func.__code__}, {func.__annotations__}"
-            )
             self.app.router.add_route(method, path, func)
             if swagger_doc:
                 swagger_doc_dict = swagger_doc.to_dict()
