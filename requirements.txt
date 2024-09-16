@@ -5,5 +5,5 @@ email-validator==2.2.0
 flake8==7.1.1
 gunicorn==23.0.0
 mypy==1.11.1
-pytest==8.3.2
+pytest==8.3.3
 pytest-aiohttp==1.0.5
